@@ -1,0 +1,14 @@
+* {
+  --border: lightgray;
+  --aside: #666;
+  --radius: 0.5rem;
+
+  box-sizing: border-box;
+  margin: 0;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+

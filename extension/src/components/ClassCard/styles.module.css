@@ -1,0 +1,56 @@
+.classCard {
+  display: flex;
+  width: 100%;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: solid 0.05rem var(--border);
+  gap: 1rem;
+
+  animation: cardIntro 0.25s;
+  animation-fill-mode: backwards;
+}
+
+.divider {
+  align-self: stretch;
+  background-color: var(--border);
+  width: 0.05rem;
+}
+
+.accent {
+  align-self: stretch;
+  width: 0.35rem;
+  border-radius: 1000rem;
+}
+
+.classHeader {
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+
+  & h2 {
+    font-size: 1.25rem;
+  }
+}
+
+.courseCode {
+  font-size: 0.8rem;
+}
+
+.term {
+  font-size: 0.8rem;
+  color: var(--aside)
+}
+
+.section {
+  display: flex;
+  min-width: 15rem;
+
+  & h3 {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+}
+
+@keyframes cardIntro {
+  0% { opacity: 0 }
+}

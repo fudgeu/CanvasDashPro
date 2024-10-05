@@ -1,0 +1,6 @@
+.container {
+  display: flex;
+  padding: 0.25rem;
+  border: solid 0.05rem var(--border);
+  border-radius: 0.1rem;
+}
