@@ -1,9 +1,9 @@
 import styles from './styles.module.css'
-import {useQueries, useQuery} from '@tanstack/react-query'
-import {getAssignments, getCourses, getQuizzes} from '../../canvas-api-util.ts'
-import {useEffect, useMemo, useState} from 'react'
+import { useQueries, useQuery } from '@tanstack/react-query'
+import { getAssignments, getCourses, getQuizzes } from '../../canvas-api-util.ts'
+import { useEffect, useMemo, useState } from 'react'
 import Chip from '../Chip/Chip.tsx'
-import {getAssignmentScore} from '../../ai-api-util.ts';
+import { getAssignmentScore } from '../../ai-api-util.ts'
 
 interface ClassCardProps {
   course: Course,
@@ -137,33 +137,6 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
       <div className={styles.divider} />
 
       <div className={styles.section}>
-        <h3>Assignments</h3>
-        <div className={styles.chipContainer}>
-          {sortedAssignments?.map((assignment, i) => {
-            let formattedDate = new Date(assignment.dueAt).toLocaleDateString()
-            formattedDate = formattedDate.slice(0, formattedDate.length - 5)
-            return (
-              <Chip
-                key={assignment.id}
-                label={assignment.name}
-                info={formattedDate}
-                infoSize="2.5rem"
-                goTo={assignment.url}
-                score={combinedScores[assignment.id]?.score ? combinedScores[assignment.id].score : null}
-              />
-            )
-          })}
-        </div>
-        {sortedAssignments.length === 0 && (
-          <div className={styles.noItems}>
-            No assignments due soon!
-          </div>
-        )}
-      </div>
-
-      <div className={styles.divider} />
-
-      <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h3>Grades</h3>
           <div className={styles.gradeContainer}>
@@ -188,6 +161,33 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
         {sortedGradedAssignments.length === 0 && (
           <div className={styles.noItems}>
             No recent grades!
+          </div>
+        )}
+      </div>
+
+      <div className={styles.divider} />
+
+      <div className={styles.section}>
+        <h3>Assignments</h3>
+        <div className={styles.chipContainer}>
+          {sortedAssignments?.map((assignment, i) => {
+            let formattedDate = new Date(assignment.dueAt).toLocaleDateString()
+            formattedDate = formattedDate.slice(0, formattedDate.length - 5)
+            return (
+              <Chip
+                key={assignment.id}
+                label={assignment.name}
+                info={formattedDate}
+                infoSize="2.5rem"
+                goTo={assignment.url}
+                score={combinedScores[assignment.id]?.score ? combinedScores[assignment.id].score : null}
+              />
+            )
+          })}
+        </div>
+        {sortedAssignments.length === 0 && (
+          <div className={styles.noItems}>
+            No assignments due soon!
           </div>
         )}
       </div>

@@ -25,4 +25,5 @@
   align-self: flex-end;
   font-size: 0.8rem;
   color: var(--aside);
+  justify-self: flex-end;
 }

@@ -1,6 +1,6 @@
 import styles from './styles.module.css'
-import {useQuery} from "@tanstack/react-query";
-import {getAnnouncementSummary} from "../../ai-api-util.ts";
+import { useQuery } from '@tanstack/react-query'
+import { getAnnouncementSummary } from '../../ai-api-util.ts'
 
 interface AnnouncementProps {
   announcement: AnnouncementObj,
