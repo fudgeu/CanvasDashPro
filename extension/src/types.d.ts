@@ -22,3 +22,7 @@ type GradedAssignment = {
   pointsPossible: number,
   url: string,
 }
+
+type UserProfile = {
+  name: string,
+}

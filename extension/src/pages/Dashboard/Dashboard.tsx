@@ -2,7 +2,7 @@ import '../../globals.css'
 import styles from './styles.module.css'
 import ClassCard from '../../components/ClassCard/ClassCard.tsx'
 import { useQuery } from '@tanstack/react-query'
-import {getColors, getCourses, getFeed} from '../../canvas-api-util.ts'
+import {getColors, getCourses, getFeed, getUser} from '../../canvas-api-util.ts'
 import { useEffect, useMemo } from 'react'
 
 export default function Dashboard() {
@@ -22,6 +22,12 @@ export default function Dashboard() {
   const { data: gradedAssignmentsData } = useQuery({
     queryKey: ['getGradedAssignments'],
     queryFn: getFeed,
+  })
+
+  // User query
+  const { data: userData } = useQuery({
+    queryKey: ['getUserProfile'],
+    queryFn: getUser,
   })
 
   // Get session storage and filter cards based on options
@@ -58,11 +64,11 @@ export default function Dashboard() {
     })
   }, [coursesData, isCoursesPending, processedCards1])
 
-  if (!coursesData || !colorsData || !gradedAssignmentsData) return // Do not render if not ready
+  if (!coursesData || !colorsData || !gradedAssignmentsData || !userData) return // Do not render if not ready
 
   return (
     <main className={styles.main}>
-      <h2>Hello, User</h2>
+      <h2>{`Hello, ${userData.name}`}</h2>
 
       <div className={styles.classCards}>
         {processedCards2.map((course, i) => (

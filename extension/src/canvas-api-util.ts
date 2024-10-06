@@ -122,3 +122,18 @@ export async function getFeed(): Promise<{ [key: number]: GradedAssignment[] }> 
 
   return results
 }
+
+export async function getUser(): Promise<UserProfile> {
+  // Get raw data from Canvas
+  const rawResp = await fetch('api/v1/users/self/profile')
+  if (!rawResp.ok) throw new Error('Canvas user API request failed')
+
+  // Get as json
+  const response = await rawResp.json()
+
+  // Parse
+  console.log(response)
+  return {
+    name: response?.name ?? 'User',
+  }
+}
