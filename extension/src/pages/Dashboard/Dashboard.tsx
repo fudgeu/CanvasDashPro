@@ -19,7 +19,7 @@ export default function Dashboard() {
     queryFn: getColors,
   })
 
-  // Recent feedback query
+  // Feed query
   const { data: feedData } = useQuery({
     queryKey: ['getFeed'],
     queryFn: getFeed,
@@ -65,11 +65,12 @@ export default function Dashboard() {
     })
   }, [coursesData, isCoursesPending, processedCards1])
 
+  // Sort announcements by date
   if (!coursesData || !colorsData || !feedData || !userData) return // Do not render if not ready
 
   return (
     <main className={styles.main}>
-      <h2>{`Hello, ${userData.name}`}</h2>
+      <h2>{`Hello, ${userData.name}!`}</h2>
 
       <div className={styles.sectionContainer}>
         <h3>Announcements</h3>

@@ -4,6 +4,7 @@ import { getAssignments, getCourses, getQuizzes } from '../../canvas-api-util.ts
 import { useEffect, useMemo, useState } from 'react'
 import Chip from '../Chip/Chip.tsx'
 import { getAssignmentScore } from '../../ai-api-util.ts'
+import AssignmentPopup from "../AssignmentPopup/AssignmentPopup.tsx";
 
 interface ClassCardProps {
   course: Course,
@@ -138,7 +139,9 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <h3>Grades</h3>
+          <a href={`courses/${course.id}/grades`} target="_blank">
+            <h3>Grades</h3>
+          </a>
           <div className={styles.gradeContainer}>
             {letterGrade && <div className={styles.grade}>{letterGrade}</div>}
             <div className={styles.grade}>{grade}</div>
@@ -168,19 +171,23 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
       <div className={styles.divider} />
 
       <div className={styles.section}>
-        <h3>Assignments</h3>
+        <a href={`courses/${course.id}/assignments`} target="_blank">
+          <h3>Assignments</h3>
+        </a>
         <div className={styles.chipContainer}>
           {sortedAssignments?.map((assignment, i) => {
             let formattedDate = new Date(assignment.dueAt).toLocaleDateString()
             formattedDate = formattedDate.slice(0, formattedDate.length - 5)
+            const score = combinedScores[assignment.id]
             return (
               <Chip
-                key={assignment.id}
+                key={i}
                 label={assignment.name}
                 info={formattedDate}
                 infoSize="2.5rem"
                 goTo={assignment.url}
-                score={combinedScores[assignment.id]?.score ? combinedScores[assignment.id].score : null}
+                score={score?.score ?? null}
+                popup={<AssignmentPopup score={score} courseName={course.name} assignmentTitle={assignment.name} />}
               />
             )
           })}

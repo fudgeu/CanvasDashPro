@@ -1,5 +1,6 @@
 .container {
   all: unset;
+  position: relative;
   display: flex;
   border: solid 0.05rem var(--border);
   background-color: #fdfdfd;

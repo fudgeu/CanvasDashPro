@@ -1,4 +1,5 @@
 import styles from './styles.module.css'
+import {ReactNode, useEffect, useRef, useState} from "react";
 
 interface AssignmentProps {
   label: string,
@@ -6,6 +7,7 @@ interface AssignmentProps {
   infoSize: string,
   goTo: string,
   score: number | null,
+  popup?: ReactNode,
 }
 
 const colors = [
@@ -21,7 +23,23 @@ const colors = [
   '#ff0000',
 ]
 
-export default function Chip({ label, info, infoSize, goTo, score }: AssignmentProps) {
+export default function Chip({ label, info, infoSize, goTo, score, popup }: AssignmentProps) {
+  const [isHovered, setIsHovered] = useState(false)
+  const [popupShow, setPopupShow] = useState(false)
+  const popupTimeout = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    clearTimeout(popupTimeout.current)
+
+    if (isHovered) {
+      popupTimeout.current = setTimeout(() => {
+        setPopupShow(true)
+      }, 750)
+    }
+
+    return () => clearTimeout(popupTimeout.current)
+  }, [isHovered])
+
   let backgroundColor = 'unset'
   if (score) {
     backgroundColor = colors[score] ?? '#ffffff'
@@ -31,7 +49,12 @@ export default function Chip({ label, info, infoSize, goTo, score }: AssignmentP
     <button
       className={styles.container}
       onClick={() => window.open(goTo, '_blank')}
-      style={{ background: `linear-gradient(90deg, ${backgroundColor}33, white)` }}
+      style={{ background: `linear-gradient(90deg, ${backgroundColor}22, white)` }}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => {
+        setIsHovered(false)
+        setPopupShow(false)
+      }}
     >
       <span className={styles.label}>{label}</span>
       <span
@@ -40,6 +63,8 @@ export default function Chip({ label, info, infoSize, goTo, score }: AssignmentP
       >
         {info}
       </span>
+
+      {popupShow && popup}
     </button>
   )
 }
