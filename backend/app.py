@@ -20,7 +20,7 @@ def validate_input(data, required_fields):
     for field in required_fields:
         if field not in data:
             return False, f"Missing required field: {field}"
-        if not isinstance(data[field], str) or not data[field].strip():
+        if not isinstance(data[field], str):
             return False, f"Invalid value for field: {field} must be a non-empty string"
     return True, "OK"
 
@@ -47,6 +47,7 @@ def assignment_analyze():
             "role": "system",
             "content": '''
                 You are an expert school educator who can analyze how much time and difficulty a college assignment is.
+                IF THERE IS NO DESCRIPTION THEN JUDGE IT BASED ON TITLE.
                 You will get the data in JSON format like the following:
                 { 
                     "className": "Name",
@@ -55,12 +56,12 @@ def assignment_analyze():
                 }
                 Calculate an average score based on approximate time needed and overall difficulty of the assignment. 
                 Reply ONLY the 3 things BELOW in a JSON object. 
-                1. Response ONLY the overall score as a number between 1 to 10. 
+                1. Response ONLY the overall score as a number between 1 to 10, NO DECIMALS FOR A SMART COLLEGE STUDENT. 
                 2. Respond the time needed in minutes as a number.
                 3. Give a 2 sentence reasoning in less than 30 words.
-                STRICTLY FOLLOW THE FOLLOWING JSON FORMAT and output:
+                FOLLOW THE FOLLOWING JSON FORMAT and output. Your output MUST be a valid JSON object. Do NOT use any additional characters that may break a JSON parser, including line breaks or code blocks. Make sure you close all quotes, and close all brackets:
                 { 
-                    "score": 7.5,
+                    "score": 5,
                     "time": 20,
                     "reason": ""
                 }

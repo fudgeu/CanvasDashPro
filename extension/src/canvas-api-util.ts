@@ -63,6 +63,8 @@ export async function getAssignments(id: number): Promise<Assignment[]> {
       dueAt: rawAssignment?.due_at ?? '1900-01-01T00:00:01Z',
       quiz: false,
       url: rawAssignment?.html_url ?? '',
+      id: rawAssignment?.id ?? -1,
+      quizId: rawAssignment?.quiz_id ?? -1,
     }
   })
 
@@ -80,10 +82,13 @@ export async function getQuizzes(id: number): Promise<Assignment[]> {
   // Parse
   const result: Assignment[] = response.map((rawAssignment) => {
     return {
+      id: rawAssignment?.id ?? -1,
       name: rawAssignment?.title ?? 'Unknown',
       desc: rawAssignment?.description ?? 'Unknown',
       dueAt: rawAssignment?.due_at ?? '1900-01-01T00:00:01Z',
+      url: rawAssignment?.html_url ?? '',
       quiz: true,
+      quizId: rawAssignment?.id,
     }
   })
 
@@ -132,7 +137,6 @@ export async function getUser(): Promise<UserProfile> {
   const response = await rawResp.json()
 
   // Parse
-  console.log(response)
   return {
     name: response?.name ?? 'User',
   }
