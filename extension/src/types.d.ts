@@ -26,3 +26,9 @@ type GradedAssignment = {
 type UserProfile = {
   name: string,
 }
+
+type AssignmentScore = {
+  score: number,
+  reason: string,
+  time: number,
+}

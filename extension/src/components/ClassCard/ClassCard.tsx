@@ -1,8 +1,9 @@
 import styles from './styles.module.css'
-import { useQuery } from '@tanstack/react-query'
-import { getAssignments, getQuizzes } from '../../canvas-api-util.ts'
+import {useQueries, useQuery} from '@tanstack/react-query'
+import {getAssignments, getCourses, getQuizzes} from '../../canvas-api-util.ts'
 import { useMemo } from 'react'
 import Chip from '../Chip/Chip.tsx'
+import {getAssignmentScore} from "../../ai-api-util.ts";
 
 interface ClassCardProps {
   course: Course,
@@ -13,16 +14,27 @@ interface ClassCardProps {
 
 export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssignments }: ClassCardProps) {
   // Get assignments for class
-  const { inProgress: assignmentsInProgress, data: assignmentsData } = useQuery({
+  const { data: assignmentsData } = useQuery({
     queryKey: ['getAssignments', course.id],
     queryFn: async () => await getAssignments(course.id),
     initialData: [],
   })
 
-  const { inProgress: quizzesInProgress, data: quizzesData } = useQuery({
+  const { data: quizzesData } = useQuery({
     queryKey: ['getQuizzes', course.id],
     queryFn: async () => await getQuizzes(course.id),
     initialData: [],
+    retry: 1,
+  })
+
+  // Get all AI scores for assignments
+  const assigmentScoreQueries = useQueries({
+    queries: assignmentsData!.map((assignment: Assignment) => {
+      return {
+        queryKey: ['getAssignmentAiScore', assignment.url],
+        queryFn: async () => await getAssignmentScore(course, assignment),
+      }
+    }),
   })
 
   // Process assignments
