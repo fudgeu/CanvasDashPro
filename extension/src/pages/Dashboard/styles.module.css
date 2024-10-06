@@ -25,7 +25,13 @@
   gap: 1rem;
 }
 
+.announcementsWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .announcements {
   display: flex;
   gap: 1rem;
+  width: max-content;
 }

@@ -73,13 +73,15 @@ export default function Dashboard() {
 
       <div className={styles.sectionContainer}>
         <h3>Announcements</h3>
-        <div className={styles.announcements}>
-          {feedData[1].map((announcement) => (
-            <Announcement
-              announcement={announcement}
-              classTitle={coursesData.find((c) => c.id === announcement.courseId)?.name ?? 'Unknown'}
-            />
-          ))}
+        <div className={styles.announcementsWrapper}>
+          <div className={styles.announcements}>
+            {feedData[1].map((announcement) => (
+              <Announcement
+                announcement={announcement}
+                classTitle={coursesData.find((c) => c.id === announcement.courseId)?.name ?? 'Unknown'}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
