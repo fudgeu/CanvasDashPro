@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from cloudflare_ai import run
 from flask_cors import CORS
+import sys
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -144,7 +145,6 @@ def announcement_keywords():
         output = run("@cf/meta/llama-3.2-3b-instruct", inputs)
 
         try:
-            print(output)
             return json.loads(output)
         except Exception as e:
             return jsonify({"error": f"Failed to process AI response: {str(e)}"}), 500

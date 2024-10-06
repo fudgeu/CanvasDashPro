@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  border: solid 0.05rem var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  align-self: stretch;
+  max-width: 30rem;
+}
+
+.class {
+  font-size: 0.8rem;
+}
+
+.title {
+  font-weight: bold;
+  color: black;
+}
+
+.desc {
+  font-size: 0.8rem;
+}
+
+.date {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: var(--aside);
+}

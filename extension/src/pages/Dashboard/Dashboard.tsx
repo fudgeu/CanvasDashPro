@@ -4,6 +4,7 @@ import ClassCard from '../../components/ClassCard/ClassCard.tsx'
 import { useQuery } from '@tanstack/react-query'
 import {getColors, getCourses, getFeed, getUser} from '../../canvas-api-util.ts'
 import { useEffect, useMemo } from 'react'
+import Announcement from "../../components/Announcement/Announcement.tsx";
 
 export default function Dashboard() {
   // Courses query
@@ -19,8 +20,8 @@ export default function Dashboard() {
   })
 
   // Recent feedback query
-  const { data: gradedAssignmentsData } = useQuery({
-    queryKey: ['getGradedAssignments'],
+  const { data: feedData } = useQuery({
+    queryKey: ['getFeed'],
     queryFn: getFeed,
   })
 
@@ -64,22 +65,38 @@ export default function Dashboard() {
     })
   }, [coursesData, isCoursesPending, processedCards1])
 
-  if (!coursesData || !colorsData || !gradedAssignmentsData || !userData) return // Do not render if not ready
+  if (!coursesData || !colorsData || !feedData || !userData) return // Do not render if not ready
 
   return (
     <main className={styles.main}>
       <h2>{`Hello, ${userData.name}`}</h2>
 
-      <div className={styles.classCards}>
-        {processedCards2.map((course, i) => (
-          <ClassCard
-            key={course.id}
-            course={course}
-            color={colorsData[course.id]}
-            gradedAssignments={gradedAssignmentsData[course.id] ?? []}
-            index={i}
-          />
-        ))}
+      <div className={styles.sectionContainer}>
+        <h3>Announcements</h3>
+        <div className={styles.announcements}>
+          {feedData[1].map((announcement) => (
+            <Announcement
+              announcement={announcement}
+              classTitle={coursesData.find((c) => c.id === announcement.courseId)?.name ?? 'Unknown'}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.sectionContainer}>
+        <h3>Courses</h3>
+
+        <div className={styles.classCards}>
+          {processedCards2.map((course, i) => (
+            <ClassCard
+              key={course.id}
+              course={course}
+              color={colorsData[course.id]}
+              gradedAssignments={feedData[0][course.id] ?? []}
+              index={i}
+            />
+          ))}
+        </div>
       </div>
 
     </main>

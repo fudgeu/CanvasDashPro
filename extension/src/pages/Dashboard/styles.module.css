@@ -9,8 +9,23 @@
   }
 }
 
+.sectionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  & h3 {
+    font-weight: bold;
+  }
+}
+
 .classCards {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+
+.announcements {
+  display: flex;
   gap: 1rem;
 }

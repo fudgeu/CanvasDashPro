@@ -20,7 +20,15 @@ def run(model, inputs):
     input_data = { "messages": inputs }
     response = requests.post(f"{API_BASE_URL}{model}", headers=headers, json=input_data)
     print(response.json())
-    return response.json()['result']['response']
+    print("======")
+    print(response.json()['result']['response'])
+    print("&&&&&&&&&")
+
+    r = response.json()['result']['response'].strip()
+    if r[-1] != "}":
+        r += "}"
+
+    return r
 
 def main():
     """
@@ -32,7 +40,7 @@ def main():
     ]
     # Call the run function and print the output
     output = run("@cf/meta/llama-3-8b-instruct", inputs)
-    print(output)
+    # print(output)
 
 if __name__ == '__main__':
     main()

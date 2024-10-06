@@ -34,3 +34,11 @@ type AssignmentScore = {
   reason: string,
   time: number,
 }
+
+type AnnouncementObj = {
+  title: string,
+  desc: string,
+  courseId: number,
+  createdAt: string,
+  url: string,
+}

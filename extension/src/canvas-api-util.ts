@@ -95,10 +95,10 @@ export async function getQuizzes(id: number): Promise<Assignment[]> {
   return result
 }
 
-export async function getFeed(): Promise<{ [key: number]: GradedAssignment[] }> {
+export async function getFeed(): Promise<[{ [key: number]: GradedAssignment[] }, AnnouncementObj[]]> {
   // Get raw data from canvas
   const params = new URLSearchParams({
-    per_page: '25',
+    per_page: '100',
   })
   const rawResp = await fetch(`api/v1/users/self/activity_stream?${params}`)
   if (!rawResp.ok) throw new Error('Canvas feed API request failed')
@@ -108,21 +108,32 @@ export async function getFeed(): Promise<{ [key: number]: GradedAssignment[] }> 
 
   // Parse
   // Sort each feed object by class
-  const results: { [key: number]: GradedAssignment[] } = {}
+  const results: [{ [key: number]: GradedAssignment[] }, AnnouncementObj[]] = [{}, []]
 
   response.forEach((feedObject) => {
-    if (feedObject?.type !== 'Submission') return
-    const gradedAssignment: GradedAssignment = {
-      name: feedObject?.title ?? 'Unknown',
-      gradedAt: feedObject?.graded_at ?? '1900-01-01T00:00:01Z',
-      points: feedObject?.score ?? 0,
-      pointsPossible: feedObject?.assignment?.points_possible ?? 0,
-      url: feedObject?.assignment?.html_url ?? '',
+    if (feedObject?.type === 'Announcement') {
+      const announcement: AnnouncementObj = {
+        title: feedObject?.title ?? 'Unknown',
+        desc: feedObject?.message ?? 'Unknown',
+        courseId: feedObject?.course_id ?? -1,
+        createdAt: feedObject?.created_at ?? '1900-01-01T00:00:01Z',
+        url: feedObject?.html_url ?? '',
+      }
+      results[1].push(announcement)
     }
-    if (!(feedObject.course_id in results)) {
-      results[feedObject.course_id] = []
+    if (feedObject?.type === 'Submission') {
+      const gradedAssignment: GradedAssignment = {
+        name: feedObject?.title ?? 'Unknown',
+        gradedAt: feedObject?.graded_at ?? '1900-01-01T00:00:01Z',
+        points: feedObject?.score ?? 0,
+        pointsPossible: feedObject?.assignment?.points_possible ?? 0,
+        url: feedObject?.assignment?.html_url ?? '',
+      }
+      if (!(feedObject.course_id in results[0])) {
+        results[0][feedObject.course_id] = []
+      }
+      results[0][feedObject.course_id].push(gradedAssignment)
     }
-    results[feedObject.course_id].push(gradedAssignment)
   })
 
   return results
