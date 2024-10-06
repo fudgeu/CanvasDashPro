@@ -4,11 +4,14 @@ import json
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from cloudflare_ai import run
-
+from flask_cors import CORS
 # Load environment variables from the .env file
 load_dotenv()
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 def validate_input(data, required_fields):
     """
