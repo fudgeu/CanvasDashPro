@@ -1,9 +1,9 @@
 import styles from './styles.module.css'
 import {useQueries, useQuery} from '@tanstack/react-query'
 import {getAssignments, getCourses, getQuizzes} from '../../canvas-api-util.ts'
-import { useMemo } from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import Chip from '../Chip/Chip.tsx'
-import {getAssignmentScore} from "../../ai-api-util.ts";
+import {getAssignmentScore} from '../../ai-api-util.ts';
 
 interface ClassCardProps {
   course: Course,
@@ -13,6 +13,10 @@ interface ClassCardProps {
 }
 
 export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssignments }: ClassCardProps) {
+  const [savedAiScores, setSavedAiScores] = useState(() => {
+    return JSON.parse(window.localStorage.getItem('aiAssignmentScores') ?? '{}')
+  })
+
   // Get assignments for class
   const { data: assignmentsData } = useQuery({
     queryKey: ['getAssignments', course.id],
@@ -27,20 +31,15 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
     retry: 1,
   })
 
-  // Get all AI scores for assignments
-  const assigmentScoreQueries = useQueries({
-    queries: assignmentsData!.map((assignment: Assignment) => {
-      return {
-        queryKey: ['getAssignmentAiScore', assignment.url],
-        queryFn: async () => await getAssignmentScore(course, assignment),
-      }
-    }),
-  })
-
   // Process assignments
   const sortedAssignments: Assignment[] = useMemo(() => {
     if (!assignmentsData || !quizzesData) return []
-    const combinedAssignments = [...quizzesData, ...assignmentsData]
+
+    const filteredQuizzes = quizzesData.filter((quiz) => {
+      return !assignmentsData.find((assignment) => assignment.quizId === quiz.quizId)
+    })
+
+    const combinedAssignments = [...filteredQuizzes, ...assignmentsData]
 
     const now = new Date()
     const weekFromNow = new Date()
@@ -60,6 +59,44 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
     // Only display first 6
     return result.reverse().slice(0, 6)
   }, [assignmentsData, quizzesData])
+
+  // Get all AI scores for assignments
+  const needToGetScores = sortedAssignments.filter((assignment) => {
+    return !Object.keys(savedAiScores).includes(assignment.id.toString())
+  })
+
+  const assigmentScoreQueries = useQueries({
+    queries: needToGetScores.map((assignment: Assignment) => {
+      return {
+        queryKey: ['getAssignmentAiScore', assignment.id],
+        queryFn: async () => await getAssignmentScore(course, assignment),
+        retry: 1,
+        staleTime: Infinity,
+      }
+    }),
+  })
+
+  // Store
+  useEffect(() => {
+    if (assigmentScoreQueries.find((a) => a.isPending)) return
+    const newList = {
+      ...savedAiScores,
+    }
+
+    assigmentScoreQueries.forEach((scoreObj, i) => {
+      newList[needToGetScores[i].id.toString()] = scoreObj.data!
+    })
+
+    window.localStorage.setItem('aiAssignmentScores', JSON.stringify(newList))
+  }, [assigmentScoreQueries, needToGetScores, savedAiScores])
+
+  // Combine list of stored and new assignments
+  const combinedScores = { ...savedAiScores }
+  assigmentScoreQueries.forEach((scoreObj, i) => {
+    if (scoreObj.isPending) return
+    combinedScores[needToGetScores[i].id.toString()] = scoreObj.data
+  })
+  console.log(combinedScores)
 
   // Process graded assignments
   const sortedGradedAssignments = useMemo(() => {
@@ -102,15 +139,17 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
       <div className={styles.section}>
         <h3>Assignments</h3>
         <div className={styles.chipContainer}>
-          {sortedAssignments?.map((assignment) => {
+          {sortedAssignments?.map((assignment, i) => {
             let formattedDate = new Date(assignment.dueAt).toLocaleDateString()
             formattedDate = formattedDate.slice(0, formattedDate.length - 5)
             return (
               <Chip
+                key={assignment.id}
                 label={assignment.name}
                 info={formattedDate}
                 infoSize="2.5rem"
                 goTo={assignment.url}
+                score={combinedScores[assignment.id]?.score ? combinedScores[assignment.id].score : null}
               />
             )
           })}
@@ -136,10 +175,12 @@ export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssi
           {sortedGradedAssignments.map((assignment) => {
             return (
               <Chip
+                key={assignment.url}
                 label={assignment.name}
                 info={`${assignment.points}/${assignment.pointsPossible}`}
                 infoSize="3.5rem"
                 goTo={assignment.url}
+                score={null}
               />
             )
           })}

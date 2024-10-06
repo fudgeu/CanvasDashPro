@@ -1,7 +1,8 @@
-export const BACKEND_URL = 'http://localhost:5000'
+export const BACKEND_URL = 'http://127.0.0.1:5000'
 
 export async function getAssignmentScore(course: Course, assignment: Assignment): Promise<AssignmentScore> {
   // Call backend API
+  console.log("RUNNING FOR " + assignment.id)
   const rawResp = await fetch(`${BACKEND_URL}/assignment_analyze`, {
     method: 'POST',
     headers: {
@@ -14,8 +15,6 @@ export async function getAssignmentScore(course: Course, assignment: Assignment)
     }),
   })
 
-  console.log("sdfsdfsdf")
   const result = await rawResp.json()
-  console.log(result)
   return result as AssignmentScore
 }

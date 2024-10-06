@@ -13,6 +13,8 @@ type Assignment = {
   dueAt: string,
   quiz: boolean,
   url: string,
+  id: number,
+  quizId: number,
 }
 
 type GradedAssignment = {
