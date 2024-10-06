@@ -81,7 +81,9 @@ def assignment_analyze():
 
         inputs = [system1, user_input]
 
-        output = run("@cf/meta/llama-3.2-3b-instruct", inputs)
+        # output = run("@cf/meta/llama-3.2-3b-instruct", inputs)
+        output = run("@cf/meta/llama-3-8b-instruct", inputs)
+
 
         try:
             print(output)
@@ -122,8 +124,8 @@ def announcement_keywords():
                     "announcementTitle": "the announcement's title",
                     "announcementBody": "the announcement's body"
                 }
-                Generate a one-sentence summary in third-person perspective from the given data.
-                Make sure the response is in JSON format like this:
+                Generate a one-sentence summary less than 25 words long in third-person perspective from the given data.
+                Make sure the response is strictly following in JSON format like this and there should be no other content that will effect the JSON parsing process:
                 {"body": "summary..."}
             '''
         }
@@ -142,7 +144,8 @@ def announcement_keywords():
 
         inputs = [system1, user_input]
 
-        output = run("@cf/meta/llama-3.2-3b-instruct", inputs)
+        # output = run("@cf/meta/llama-3.2-3b-instruct", inputs)
+        output = run("@cf/meta/llama-3-8b-instruct", inputs)
 
         try:
             return json.loads(output)
