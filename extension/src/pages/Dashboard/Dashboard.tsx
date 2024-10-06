@@ -2,7 +2,7 @@ import '../../globals.css'
 import styles from './styles.module.css'
 import ClassCard from '../../components/ClassCard/ClassCard.tsx'
 import { useQuery } from '@tanstack/react-query'
-import { getColors, getCourses } from '../../canvas-api-util.ts'
+import {getColors, getCourses, getFeed} from '../../canvas-api-util.ts'
 import { useEffect, useMemo } from 'react'
 
 export default function Dashboard() {
@@ -16,6 +16,12 @@ export default function Dashboard() {
   const { isPending: isColorsPending, data: colorsData } = useQuery({
     queryKey: ['getColors'],
     queryFn: getColors,
+  })
+
+  // Recent feedback query
+  const { data: gradedAssignmentsData } = useQuery({
+    queryKey: ['getGradedAssignments'],
+    queryFn: getFeed,
   })
 
   // Get session storage and filter cards based on options
@@ -52,8 +58,7 @@ export default function Dashboard() {
     })
   }, [coursesData, isCoursesPending, processedCards1])
 
-  if (isCoursesPending || isColorsPending) return // Do not render if no data yet
-  if (!coursesData || !colorsData) return // Clear any possible undefined objects
+  if (!coursesData || !colorsData || !gradedAssignmentsData) return // Do not render if not ready
 
   return (
     <main className={styles.main}>
@@ -65,6 +70,7 @@ export default function Dashboard() {
             key={course.id}
             course={course}
             color={colorsData[course.id]}
+            gradedAssignments={gradedAssignmentsData[course.id] ?? []}
             index={i}
           />
         ))}

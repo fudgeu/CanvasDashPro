@@ -1,0 +1,33 @@
+.container {
+  all: unset;
+  display: flex;
+  border: solid 0.05rem var(--border);
+  background-color: #fdfdfd;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  justify-content: space-between;
+  width: 15rem;
+  transition: border-color 80ms;
+
+  &:hover {
+    cursor: pointer;
+    border-color: var(--border-highlighted);
+  }
+}
+
+.label {
+  padding: 0 0.25rem;
+  text-wrap: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.25rem;
+  background-color: #00000008;
+  font-size: 0.65rem;
+}

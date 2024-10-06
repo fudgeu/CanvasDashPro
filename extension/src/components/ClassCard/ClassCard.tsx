@@ -1,29 +1,41 @@
 import styles from './styles.module.css'
 import { useQuery } from '@tanstack/react-query'
-import { getAssignments } from '../../canvas-api-util.ts'
-import {useMemo} from "react";
+import { getAssignments, getQuizzes } from '../../canvas-api-util.ts'
+import { useMemo } from 'react'
+import Chip from '../Chip/Chip.tsx'
 
 interface ClassCardProps {
   course: Course,
   color?: string,
   index: number,
+  gradedAssignments: GradedAssignment[],
 }
 
-export default function ClassCard({ course, color = '#aaaaaa', index }: ClassCardProps) {
+export default function ClassCard({ course, color = '#aaaaaa', index, gradedAssignments }: ClassCardProps) {
   // Get assignments for class
   const { inProgress: assignmentsInProgress, data: assignmentsData } = useQuery({
     queryKey: ['getAssignments', course.id],
     queryFn: async () => await getAssignments(course.id),
+    initialData: [],
   })
 
-  const sortedAssignments = useMemo(() => {
-    if (!assignmentsData) return []
+  const { inProgress: quizzesInProgress, data: quizzesData } = useQuery({
+    queryKey: ['getQuizzes', course.id],
+    queryFn: async () => await getQuizzes(course.id),
+    initialData: [],
+  })
+
+  // Process assignments
+  const sortedAssignments: Assignment[] = useMemo(() => {
+    if (!assignmentsData || !quizzesData) return []
+    const combinedAssignments = [...quizzesData, ...assignmentsData]
+
     const now = new Date()
     const weekFromNow = new Date()
-    weekFromNow.setDate(now.getDate() + 7)
+    weekFromNow.setDate(now.getDate() + 14)
 
     // Filter out due dates that have already passed
-    let result = assignmentsData.filter((assignment) => {
+    let result = combinedAssignments.filter((assignment) => {
       const assignmentDate = new Date(assignment.dueAt)
       return assignmentDate >= now && assignmentDate < weekFromNow
     })
@@ -34,8 +46,23 @@ export default function ClassCard({ course, color = '#aaaaaa', index }: ClassCar
     })
 
     // Only display first 6
+    return result.reverse().slice(0, 6)
+  }, [assignmentsData, quizzesData])
+
+  // Process graded assignments
+  const sortedGradedAssignments = useMemo(() => {
+    let result = gradedAssignments.sort((assignmentA, assignmentB) => {
+      return new Date(assignmentB.gradedAt) - new Date(assignmentA.gradedAt)
+    })
     return result.slice(0, 6)
-  }, [assignmentsData])
+  }, [gradedAssignments])
+
+  // Process grade
+  const grade = `${Math.round(course.grade * 10) / 10}%`
+  let letterGrade = null
+  if (course.letterGrade.length <= 2) {
+    letterGrade = course.letterGrade
+  }
 
   return (
     <div
@@ -51,7 +78,9 @@ export default function ClassCard({ course, color = '#aaaaaa', index }: ClassCar
       />
 
       <div className={styles.classHeader}>
-        <h2>{course.name}</h2>
+        <a href={`courses/${course.id}`} target="_blank">
+          <h2>{course.name}</h2>
+        </a>
         <span className={styles.courseCode}>{course.courseCode}</span>
         <p className={styles.term}>{course.term}</p>
       </div>
@@ -59,19 +88,55 @@ export default function ClassCard({ course, color = '#aaaaaa', index }: ClassCar
       <div className={styles.divider} />
 
       <div className={styles.section}>
-        <h3>Grades</h3>
-      </div>
-
-      <div className={styles.divider} />
-
-      <div className={styles.section}>
         <h3>Assignments</h3>
+        <div className={styles.chipContainer}>
+          {sortedAssignments?.map((assignment) => {
+            let formattedDate = new Date(assignment.dueAt).toLocaleDateString()
+            formattedDate = formattedDate.slice(0, formattedDate.length - 5)
+            return (
+              <Chip
+                label={assignment.name}
+                info={formattedDate}
+                infoSize="2.5rem"
+                goTo={assignment.url}
+              />
+            )
+          })}
+        </div>
+        {sortedAssignments.length === 0 && (
+          <div className={styles.noItems}>
+            No assignments due soon!
+          </div>
+        )}
       </div>
 
       <div className={styles.divider} />
 
       <div className={styles.section}>
-        <h3>Announcements</h3>
+        <div className={styles.sectionHeader}>
+          <h3>Grades</h3>
+          <div className={styles.gradeContainer}>
+            {letterGrade && <div className={styles.grade}>{letterGrade}</div>}
+            <div className={styles.grade}>{grade}</div>
+          </div>
+        </div>
+        <div className={styles.chipContainer}>
+          {sortedGradedAssignments.map((assignment) => {
+            return (
+              <Chip
+                label={assignment.name}
+                info={`${assignment.points}/${assignment.pointsPossible}`}
+                infoSize="3.5rem"
+                goTo={assignment.url}
+              />
+            )
+          })}
+        </div>
+        {sortedGradedAssignments.length === 0 && (
+          <div className={styles.noItems}>
+            No recent grades!
+          </div>
+        )}
       </div>
 
     </div>

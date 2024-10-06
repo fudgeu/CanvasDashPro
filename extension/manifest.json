@@ -11,7 +11,7 @@
   "content_scripts": [
     {
       "js": ["src/dashboard-init.tsx"],
-      "matches": ["https://webcourses.ucf.edu/"]
+      "matches": ["https://*/"]
     }
   ]
 }
