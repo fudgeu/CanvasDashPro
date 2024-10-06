@@ -1,6 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -18,6 +19,7 @@ def run(model, inputs):
     
     input_data = { "messages": inputs }
     response = requests.post(f"{API_BASE_URL}{model}", headers=headers, json=input_data)
+    print(response.json())
     return response.json()['result']['response']
 
 def main():
