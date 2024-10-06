@@ -59,7 +59,7 @@ def assignment_analyze():
                 1. Response ONLY the overall score as a number between 1 to 10, NO DECIMALS FOR A SMART COLLEGE STUDENT. 
                 2. Respond the time needed in minutes as a number.
                 3. Give a 2 sentence reasoning in less than 30 words.
-                STRICTLY FOLLOW THE FOLLOWING JSON FORMAT and output:
+                FOLLOW THE FOLLOWING JSON FORMAT and output. Your output MUST be a valid JSON object. Do NOT use any additional characters that may break a JSON parser, including line breaks or code blocks. Make sure you close all quotes, and close all brackets:
                 { 
                     "score": 5,
                     "time": 20,
