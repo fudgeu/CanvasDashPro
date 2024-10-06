@@ -8,7 +8,8 @@ if (curUrl.slice(-1) === '/') {
   curUrl = curUrl.slice(0, curUrl.length - 1)
 }
 
-if (window.localStorage.getItem('ga_enrollments') && curUrl === window.location.origin) {
+const isCanvas = Object.keys(window.sessionStorage).find((item) => item.slice(0, 19) === 'dashcards_for_user_')
+if (isCanvas && curUrl === window.location.origin) {
   const queryClient = new QueryClient()
 
   const main = document.getElementById('main')
