@@ -12,7 +12,7 @@ const isCanvas = Object.keys(window.sessionStorage).find((item) => item.slice(0,
 if (isCanvas && curUrl === window.location.origin) {
   const queryClient = new QueryClient()
 
-  const main = document.getElementById('main')
+  const main = document.getElementById('main')!
   ReactDOM.createRoot(main).render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
