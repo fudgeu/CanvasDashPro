@@ -47,6 +47,7 @@ def assignment_analyze():
             "role": "system",
             "content": '''
                 You are an expert school educator who can analyze how much time and difficulty a college assignment is.
+                IF THERE IS NO DESCRIPTION THEN JUDGE IT BASED ON TITLE.
                 You will get the data in JSON format like the following:
                 { 
                     "className": "Name",
@@ -55,12 +56,12 @@ def assignment_analyze():
                 }
                 Calculate an average score based on approximate time needed and overall difficulty of the assignment. 
                 Reply ONLY the 3 things BELOW in a JSON object. 
-                1. Response ONLY the overall score as a number between 1 to 10. 
+                1. Response ONLY the overall score as a number between 1 to 10, NO DECIMALS FOR A SMART COLLEGE STUDENT. 
                 2. Respond the time needed in minutes as a number.
                 3. Give a 2 sentence reasoning in less than 30 words.
                 STRICTLY FOLLOW THE FOLLOWING JSON FORMAT and output:
                 { 
-                    "score": 7.5,
+                    "score": 5,
                     "time": 20,
                     "reason": ""
                 }
