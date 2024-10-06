@@ -53,14 +53,15 @@ def assignment_analyze():
                 Calculate an average score based on approximate time needed and overall difficulty of the assignment. 
                 Reply ONLY the 3 things BELOW in a JSON object. 
                 1. Response ONLY the overall score as a number between 1 to 10. 
-                2. Respond the time needed in minutes.
+                2. Respond the time needed in minutes as a number.
                 3. Give a 2 sentence reasoning in less than 30 words.
-                USE FORMAT BELOW AND GENERATE IN JSON FORMAT:
+                STRICTLY FOLLOW THE FOLLOWING JSON FORMAT and output:
                 { 
-                    "score": "",
-                    "time": "",
+                    "score": 7.5,
+                    "time": 20,
                     "reason": ""
                 }
+                
             '''
         }
 
