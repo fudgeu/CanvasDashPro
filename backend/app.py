@@ -17,7 +17,7 @@ def validate_input(data, required_fields):
     for field in required_fields:
         if field not in data:
             return False, f"Missing required field: {field}"
-        if not isinstance(data[field], str) or not data[field].strip():
+        if not isinstance(data[field], str):
             return False, f"Invalid value for field: {field} must be a non-empty string"
     return True, "OK"
 
